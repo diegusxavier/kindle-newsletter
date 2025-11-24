@@ -1,4 +1,4 @@
-📰 Kindle Newsletter - Jornal Diário com IA
+# 📰 Kindle Newsletter - Jornal com IA
 
 Este projeto é um agente autônomo de notícias que cria um jornal personalizado diário. Ele coleta notícias de feeds RSS, utiliza Inteligência Artificial (Google Gemini) para filtrar o que é relevante para você, resume os artigos, gera um arquivo PDF formatado e envia automaticamente para o seu Kindle com conversão para leitura otimizada.
 
@@ -52,7 +52,9 @@ Instale as dependências:
 Renomeie o arquivo .env.example para .env e preencha com suas credenciais:
 
 ## Chave da API do Google Gemini ([https://aistudio.google.com/](https://aistudio.google.com/))
+```bash
 GEMINI_API_KEY=sua_chave_aqui
+```
 
 ## Configurações de E-mail (Gmail)
 ### Gere uma senha de app em: Conta Google > Segurança > Verificação em 2 etapas > Senhas de App
