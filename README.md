@@ -85,7 +85,7 @@ sources:
 
 Para receber o arquivo, acesse Gerencie seu Conteúdo e Dispositivos > Preferências > Configurações de documentos pessoais na Amazon e adicione o seu SENDER_EMAIL à lista de e-mails aprovados.
 
-▶️ Como Usar
+# ▶️ Como Usar
 
 Execute o arquivo principal:
 
@@ -101,7 +101,7 @@ O script irá:
 - Criar um PDF em data/output/.
 - Enviar para o seu Kindle via e-mail.
 
-📂 Estrutura do Projeto
+# 📂 Estrutura do Projeto
 
 ```plaintext
 kindle-newsletter/
