@@ -31,7 +31,7 @@ Clone o repositório:
 ```bash
    git clone [https://github.com/diegusxavier/kindle-newsletter.git](https://github.com/diegusxavier/kindle-newsletter.git)
    cd kindle-newsletter
-
+```
 
 Crie e ative um ambiente virtual:
 
@@ -41,12 +41,12 @@ Crie e ative um ambiente virtual:
     source venv/bin/activate
     # Windows:
     venv\Scripts\activate
-
+```
 
 Instale as dependências:
-
-pip install -r requirements.txt
-
+```python
+    pip install -r requirements.txt
+```
 
 ⚙️ Configuração
 
