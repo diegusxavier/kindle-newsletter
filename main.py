@@ -33,7 +33,7 @@ def main():
     candidates = scraper.get_candidates()
     if not candidates: return
 
-    max_news = config.get('preferences', {}).get('max_articles_per_source', 5) 
+    max_news = config.get('preferences', {}).get('max_articles_per_source', 3) 
     selected_articles = curator.filter_candidates(candidates, limit=max_news)
     print(f"🎯 IA selecionou {len(selected_articles)} notícias.")
 
@@ -64,8 +64,8 @@ def main():
         
         # Pergunta se quer enviar (opcional, para teste) ou envia direto
         # Vamos enviar direto:
-        emailer = EmailSender(config)
-        emailer.send_pdf(pdf_path)
+        # emailer = EmailSender(config)
+        # emailer.send_pdf(pdf_path)
 
 if __name__ == "__main__":
     main()

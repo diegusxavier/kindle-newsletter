@@ -36,7 +36,7 @@ class NewsCurator:
         Você é um editor chefe pessoal. Seu usuário tem interesse nestes tópicos: {topics_str}.
         
         Abaixo está uma lista de manchetes candidatas. 
-        Sua tarefa é selecionar APENAS as {limit} notícias mais relevantes e importantes baseadas nos interesses do usuário.
+        Sua tarefa é selecionar até {limit} das notícias mais relevantes e importantes baseadas nos interesses do usuário.
         Se houver notícias repetidas ou muito similares, escolha apenas a melhor fonte.
         
         LISTA DE CANDIDATOS:
@@ -72,14 +72,14 @@ class NewsCurator:
         print(f"🤔 Analisando artigo: {article_data['title']}...")
         prompt = f"""
         Você é um analista de inteligência especialista. Sua tarefa é ler e analisar a notícia abaixo e criar um relatório de resumo para um jornal executivo.
-
+        O título do artigo é "{article_data['title']}", e se estiver em inglês, deve ser traduzido para português onde houver escrito *TÍTULO*.
         DADOS DA NOTÍCIA:
-        Título: {article_data['title']} (Se estiver em inglês, deve traduzir o título para português)
+        Título: *TÍTULO* 
         Fonte: {article_data.get('source')}
         Conteúdo: {article_data['content'][:8000]} (Texto truncado se for muito longo)
 
         FORMATO DE SAÍDA (Markdown):
-        - Se o Título estiver em inglês, traduza-o para português, mas em uma linha em itálico. Se estiver em português, não repita o título, siga para o resumo.
+        - Se {article_data['title']} estiver em inglês, reescreva-o em inglês e em itálico no início do resumo.
         - Escreva um resumo de 2 a 3 parágrafos, mantendo as informações do conteúdo.
         - Liste 3 "Pontos Chave" em bullets.
         - Inclua uma seção "Contexto Adicional" com 2-3 frases que expliquem o motivo da importância do tema ou implicações.
@@ -106,7 +106,7 @@ class NewsCurator:
         NOTÍCIAS DO DIA:
         {combined_text}
         ESTRUTURA DO BRIEFING (Markdown):
-        # Briefing Executivo
+        # KARTEIRO
         ## Visão Geral
         Um ou dois parágrafos concisos conectando os temas. Qual é o sentimento geral das notícias hoje?
         ## Resumo dos Temas Principais

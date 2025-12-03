@@ -11,6 +11,8 @@ preferences:
     - "Mercado Financeiro"
     - "Tecnologia"
     - "Geopolítica"
+    - "Engenharia"
+    - "Meio Ambiente"
   
   include_images: false # true = baixa e insere imagens; false = apenas texto
   max_articles_per_source: 10 # Limita quantas notícias pegar de cada site para não ficar gigante
@@ -18,14 +20,23 @@ preferences:
 # --- Fontes de Notícias (RSS Feeds) ---
 # Você pode adicionar quantos quiser. Busque por "nome do site + rss" no Google.
 sources:
-  - name: "Tech Crunch"
-    url: "https://techcrunch.com/feed/"  # Tech Crunch
+  - name: "CNN Brasil - Internacional"
+    url: "https://www.cnnbrasil.com.br/internacional/"  # Tech Crunch
   
-  - name: "Folha - Em Cima da Hora"
-    url: "https://feeds.folha.uol.com.br/emcimadahora/rss091.xml" # Folha - Em Cima da Hora
+  - name: "Carta Capital - Política"
+    url: "https://www.cartacapital.com.br/politica/feed/" # Folha - Em Cima da Hora
 
   - name: "The Intercept Brasil"
     url: "https://www.intercept.com.br/feed/" # The Intercept Brasil
+
+  - name: "O Eco"
+    url: "https://oeco.org.br/feed/" # O Eco
+
+  - name: "Tech Crunch"
+    url: "https://techcrunch.com/feed/" # Tech Crunch
+
+  - name: "InvestNews"
+    url: "https://investnews.com.br/feed/" #  InvestNews
 
 # --- Configurações de API e Credenciais ---
 # DICA: É recomendável usar variáveis de ambiente para as chaves reais no arquivo .env
