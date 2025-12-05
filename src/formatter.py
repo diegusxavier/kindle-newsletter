@@ -2,7 +2,7 @@ import os
 import re
 import uuid
 from xml.sax.saxutils import escape
-from reportlab.lib.pagesizes import A4
+from reportlab.lib.pagesizes import A5
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image, PageBreak, Flowable
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
 from reportlab.lib import colors
@@ -10,7 +10,7 @@ from datetime import datetime
 
 class Bookmark(Flowable):
     """
-    Elemento invisível que adiciona um marcador no índice (outline) do PDF.
+    Cria um marcador na barra lateral do PDF (Outline).
     """
     def __init__(self, title, level=0):
         Flowable.__init__(self)
@@ -19,22 +19,79 @@ class Bookmark(Flowable):
         self.key = str(uuid.uuid4())
 
     def draw(self):
+        # 1. Marca a posição atual na página
         self.canv.bookmarkPage(self.key)
+        # 2. Adiciona o título ao índice lateral apontando para essa posição
         self.canv.addOutlineEntry(self.title, self.key, level=self.level)
 
 class NewsFormatter:
     def __init__(self):
         self.styles = getSampleStyleSheet()
         
-        # Estilos personalizados
-        self.styles.add(ParagraphStyle(name='BriefingTitle', parent=self.styles['Title'], fontSize=24, spaceAfter=20))
-        self.styles.add(ParagraphStyle(name='SectionHeader', parent=self.styles['Heading2'], fontSize=16, spaceBefore=15, spaceAfter=10, textColor=colors.darkblue))
-        self.styles.add(ParagraphStyle(name='SubHeader', parent=self.styles['Heading3'], fontSize=14, spaceBefore=10, spaceAfter=5))
-        self.styles.add(ParagraphStyle(name='ArticleTitle', parent=self.styles['Heading1'], fontSize=18, spaceBefore=20, spaceAfter=10, textColor=colors.darkred))
-        self.styles.add(ParagraphStyle(name='Metadata', parent=self.styles['Italic'], fontSize=9, textColor=colors.gray, spaceAfter=10))
-        self.styles.add(ParagraphStyle(name='BodyTextCustom', parent=self.styles['BodyText'], fontSize=11, leading=15, spaceAfter=8))
-        # Novo estilo para a lista de links
-        self.styles.add(ParagraphStyle(name='LinkItem', parent=self.styles['BodyText'], fontSize=10, leading=12, spaceAfter=4))
+        # --- ESTILOS EXTRA LARGE + JUSTIFICADO ---
+        
+        self.styles.add(ParagraphStyle(
+            name='BriefingTitle', 
+            parent=self.styles['Title'], 
+            fontSize=32,
+            leading=38,
+            spaceAfter=25
+        ))
+        
+        self.styles.add(ParagraphStyle(
+            name='SectionHeader', 
+            parent=self.styles['Heading2'], 
+            fontSize=26,
+            leading=32,
+            spaceBefore=20, 
+            spaceAfter=15, 
+            textColor=colors.darkblue
+        ))
+        
+        self.styles.add(ParagraphStyle(
+            name='SubHeader', 
+            parent=self.styles['Heading3'], 
+            fontSize=22,
+            leading=28,
+            spaceBefore=15, 
+            spaceAfter=10
+        ))
+        
+        self.styles.add(ParagraphStyle(
+            name='ArticleTitle', 
+            parent=self.styles['Heading1'], 
+            fontSize=28,
+            leading=34,
+            spaceBefore=25, 
+            spaceAfter=15, 
+            textColor=colors.darkred
+        ))
+        
+        self.styles.add(ParagraphStyle(
+            name='Metadata', 
+            parent=self.styles['Italic'], 
+            fontSize=14,
+            textColor=colors.gray, 
+            spaceAfter=15
+        ))
+        
+        # JUSTIFICADO
+        self.styles.add(ParagraphStyle(
+            name='BodyTextCustom', 
+            parent=self.styles['BodyText'], 
+            fontSize=18,            
+            leading=24,             
+            spaceAfter=12,
+            alignment=4 # Justificado
+        ))
+        
+        self.styles.add(ParagraphStyle(
+            name='LinkItem', 
+            parent=self.styles['BodyText'], 
+            fontSize=16, 
+            leading=22, 
+            spaceAfter=10
+        ))
 
     def _parse_markdown_to_flowables(self, text):
         flowables = []
@@ -42,7 +99,9 @@ class NewsFormatter:
         for line in lines:
             line = line.strip()
             if not line: continue
+            
             line = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', line)
+            
             if line.startswith('# '): flowables.append(Paragraph(line[2:], self.styles['BriefingTitle']))
             elif line.startswith('## '): flowables.append(Paragraph(line[3:], self.styles['SectionHeader']))
             elif line.startswith('### '): flowables.append(Paragraph(line[4:], self.styles['SubHeader']))
@@ -51,64 +110,85 @@ class NewsFormatter:
         return flowables
 
     def create_pdf(self, briefing_text, articles_list, candidates_list=None, output_filename="daily_briefing.pdf"):
-        """
-        Gera o arquivo PDF final. Agora aceita candidates_list.
-        """
         output_path = os.path.join("data", "output", output_filename)
         os.makedirs(os.path.dirname(output_path), exist_ok=True)
         
-        doc = SimpleDocTemplate(output_path, pagesize=A4, rightMargin=40, leftMargin=40, topMargin=40, bottomMargin=40)
+        doc = SimpleDocTemplate(output_path, pagesize=A5, rightMargin=10, leftMargin=10, topMargin=10, bottomMargin=10)
         story = []
 
+        # IDs únicos para links internos
+        for art in articles_list:
+            art['internal_id'] = str(uuid.uuid4())
+
         # --- 1. Capa / Briefing ---
-        story.append(Bookmark("Briefing Executivo", level=0))
         date_str = datetime.now().strftime("%d/%m/%Y")
         story.append(Paragraph(f"Edição de: {date_str}", self.styles['Metadata']))
         story.append(Spacer(1, 10))
         story.extend(self._parse_markdown_to_flowables(briefing_text))
+        
+        # Quebra para isolar o briefing
         story.append(PageBreak())
 
-        # --- 2. Artigos Detalhados ---
-        story.append(Bookmark("Notícias Detalhadas", level=0))
-        story.append(Paragraph("Notícias Detalhadas", self.styles['BriefingTitle']))
-        story.append(Spacer(1, 20))
+        # --- 2. Nesta Edição (Página Exclusiva) ---
+        story.append(Paragraph("Nesta Edição", self.styles['SectionHeader']))
+        story.append(Spacer(1, 10))
+        
+        for art in articles_list:
+            clean_title = escape(art['title'])
+            # Link interno apontando para a âncora da notícia
+            link_html = f'<a href="#{art["internal_id"]}" color="blue"><u>{clean_title}</u></a>'
+            story.append(Paragraph(f"• {link_html}", self.styles['LinkItem']))
 
-        for article in articles_list:
+        # Quebra para isolar a lista de links das notícias reais
+        story.append(PageBreak())
+
+        # --- 3. Artigos (Deep Dive) ---
+        for i, article in enumerate(articles_list):
+            # Se não for o primeiro artigo, quebra a página (o primeiro já está quebrado pelo PageBreak acima)
+            if i > 0:
+                story.append(PageBreak())
+
             clean_title = escape(article['title'])
-            story.append(Bookmark(clean_title, level=1))
             
+            # Bookmark na barra lateral
+            story.append(Bookmark(clean_title, level=0))
+            
+            # Título com âncora (destino do link) e link externo (fonte)
             if article.get('url'):
-                title_paragraph = f'<a href="{article["url"]}">{clean_title}</a>'
+                title_html = f'<a name="{article["internal_id"]}"/><a href="{article["url"]}" color="darkred">{clean_title}</a>'
             else:
-                title_paragraph = clean_title
+                title_html = f'<a name="{article["internal_id"]}"/>{clean_title}'
             
-            story.append(Paragraph(title_paragraph, self.styles['ArticleTitle']))
+            story.append(Paragraph(title_html, self.styles['ArticleTitle']))
+            
+            # Metadados
             source_info = f"Fonte: {article.get('source', 'Desconhecida')} | {article.get('published_at', '')}"
             story.append(Paragraph(source_info, self.styles['Metadata']))
             
+            # Imagem
             if article.get('local_image_path') and os.path.exists(article['local_image_path']):
                 try:
                     img = Image(article['local_image_path'])
+                    available_width = 380 
                     aspect = img.imageHeight / float(img.imageWidth)
-                    img.drawWidth = 400
-                    img.drawHeight = 400 * aspect
+                    img.drawWidth = available_width
+                    img.drawHeight = available_width * aspect
                     story.append(img)
-                    story.append(Spacer(1, 10))
+                    story.append(Spacer(1, 15))
                 except: pass
 
+            # Conteúdo
             if 'ai_summary' in article:
                 story.extend(self._parse_markdown_to_flowables(article['ai_summary']))
             
-            story.append(Spacer(1, 20))
-            story.append(Paragraph("_" * 50, self.styles['BodyText']))
-            story.append(Spacer(1, 20))
+            # Rodapé visual
+            story.append(Spacer(1, 25))
+            story.append(Paragraph("_" * 30, self.styles['BodyTextCustom']))
 
-        # --- 3. Lista Completa de Candidatos (NOVO) ---
+        # --- 4. Lista de Candidatos ---
         if candidates_list:
-            story.append(PageBreak()) # Nova página
-            story.append(Bookmark("Outras Manchetes", level=0))
-            story.append(Paragraph("Todas as Manchetes Rastreadas", self.styles['BriefingTitle']))
-            story.append(Paragraph("Abaixo, a lista completa de notícias encontradas nos feeds hoje.", self.styles['BodyTextCustom']))
+            story.append(PageBreak())
+            story.append(Paragraph("Outras Manchetes", self.styles['BriefingTitle']))
             story.append(Spacer(1, 15))
 
             for item in candidates_list:
@@ -116,15 +196,12 @@ class NewsFormatter:
                 url = item.get('url', '')
                 source = item.get('source', '?')
                 
-                # Formato: [Fonte] Título (Link)
-                # O ReportLab permite links via tag <a href="...">
                 line_html = f'<b>[{source}]</b> <a href="{url}" color="blue">{clean_title}</a>'
-                
                 story.append(Paragraph(line_html, self.styles['LinkItem']))
 
         try:
             doc.build(story)
-            print(f"📇 PDF gerado com sucesso em: {output_path}")
+            print(f"📇 PDF (XL + Sumário Exclusivo) gerado com sucesso em: {output_path}")
             return output_path
         except Exception as e:
             print(f"❌ Erro ao gerar PDF: {e}")

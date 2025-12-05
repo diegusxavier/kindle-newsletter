@@ -72,14 +72,13 @@ class NewsCurator:
         print(f"🤔 Analisando artigo: {article_data['title']}...")
         prompt = f"""
         Você é um analista de inteligência especialista. Sua tarefa é ler e analisar a notícia abaixo e criar um relatório de resumo para um jornal executivo.
-        O título do artigo é "{article_data['title']}", e se estiver em inglês, deve ser traduzido para português onde houver escrito *TÍTULO*.
         DADOS DA NOTÍCIA:
-        Título: *TÍTULO* (Se estiver em inglês, traduza para português)
+        Título: *{article_data['title']}
         Fonte: {article_data.get('source')}
         Conteúdo: {article_data['content'][:8000]} (Texto truncado se for muito longo)
 
         FORMATO DE SAÍDA (Markdown):
-        - Se {article_data['title']} estiver em inglês, reescreva-o em inglês e em itálico no início do resumo.
+        - Se {article_data['title']} estiver em inglês, reescreva-o em traduzindo para o português brasileiro e em itálico no início do resumo.
         - Escreva um resumo de 2 a 3 parágrafos, mantendo as informações do conteúdo.
         - Liste 3 "Pontos Chave" em bullets.
         - Inclua uma seção "Contexto Adicional" com 2-3 frases que expliquem o motivo da importância do tema ou implicações.

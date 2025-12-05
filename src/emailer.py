@@ -5,6 +5,8 @@ from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
 from dotenv import load_dotenv
+import yaml
+import sys
 
 load_dotenv()
 
@@ -37,7 +39,7 @@ class EmailSender:
         msg = MIMEMultipart()
         msg['From'] = self.sender_email
         msg['To'] = self.kindle_email
-        msg['Subject'] = "Convert" 
+        msg['Subject'] = "" 
 
         body = ""
         msg.attach(MIMEText(body, 'plain'))
@@ -75,3 +77,46 @@ class EmailSender:
             print(f"❌ Falha no envio do e-mail: {e}")
             print("Dica: Verifique se a 'Senha de App' foi gerada corretamente e se o SMTP está liberado.")
             return False
+        
+
+# ... (mantenha o código anterior da classe EmailSender)
+
+if __name__ == "__main__":
+    print("🧪 Iniciando Teste Isolado de Envio de E-mail...")
+    
+    try:
+        # 1. Instancia a classe carregando as credenciais do .env
+        sender = EmailSender()
+        
+        # 2. Busca automática do PDF mais recente para teste
+        # Define o diretório de saída padrão
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__))) # Volta de src/ para a raiz
+        output_dir = os.path.join(base_dir, "data", "output")
+        
+        # Lista arquivos PDF
+        pdf_files = []
+        if os.path.exists(output_dir):
+            pdf_files = [f for f in os.listdir(output_dir) if f.endswith(".pdf")]
+        
+        if pdf_files:
+            # Pega o último (assumindo nomes ou datas que ordenem alfabeticamente ou apenas pega um qualquer)
+            pdf_files.sort(reverse=True)
+            test_pdf_path = os.path.join(output_dir, pdf_files[0])
+            
+            print(f"📄 Arquivo selecionado para teste: {test_pdf_path}")
+            
+            # 3. Executa o envio
+            sucesso = sender.send_pdf(test_pdf_path)
+            
+            if sucesso:
+                print("✅ Teste concluído: E-mail enviado!")
+            else:
+                print("❌ Teste concluído: Falha no envio.")
+        else:
+            print(f"⚠️ Nenhum arquivo PDF encontrado em '{output_dir}'.")
+            print("💡 Dica: Execute o 'main.py' pelo menos uma vez para gerar um jornal ou crie um arquivo .pdf vazio nessa pasta para testar.")
+
+    except Exception as e:
+        print(f"❌ Erro fatal durante o teste: {e}")
+    
+    
