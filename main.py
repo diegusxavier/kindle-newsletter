@@ -34,7 +34,7 @@ def main():
     candidates = scraper.get_candidates()
     if not candidates: return
 
-    max_news = config.get('preferences', {}).get('max_articles_per_source ', 1) 
+    max_news = config.get('preferences', {}).get('max_articles_per_source', 1) 
     selected_articles = curator.filter_candidates(candidates, limit=max_news)
     print(f"🎯 IA selecionou {len(selected_articles)} notícias.")
 
