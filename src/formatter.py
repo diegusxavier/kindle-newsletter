@@ -28,69 +28,76 @@ class NewsFormatter:
     def __init__(self):
         self.styles = getSampleStyleSheet()
         
-        # --- ESTILOS EXTRA LARGE + JUSTIFICADO ---
+        # --- ESTILOS PADRÃO (Ajustados para leitura normal) ---
         
+        # Título Principal (Capa)
         self.styles.add(ParagraphStyle(
             name='BriefingTitle', 
             parent=self.styles['Title'], 
-            fontSize=32,
-            leading=38,
-            spaceAfter=25
+            fontSize=24,      # Reduzido de 32
+            leading=30,       # Ajuste de entrelinha
+            spaceAfter=20
         ))
         
+        # Cabeçalhos de Seção (H2)
         self.styles.add(ParagraphStyle(
             name='SectionHeader', 
             parent=self.styles['Heading2'], 
-            fontSize=26,
-            leading=32,
-            spaceBefore=20, 
-            spaceAfter=15, 
+            fontSize=18,      # Reduzido de 26
+            leading=22,
+            spaceBefore=15, 
+            spaceAfter=10, 
             textColor=colors.darkblue
         ))
         
+        # Sub-cabeçalhos (H3)
         self.styles.add(ParagraphStyle(
             name='SubHeader', 
             parent=self.styles['Heading3'], 
-            fontSize=22,
-            leading=28,
-            spaceBefore=15, 
-            spaceAfter=10
+            fontSize=14,      # Reduzido de 22
+            leading=18,
+            spaceBefore=12, 
+            spaceAfter=8
         ))
         
+        # Título do Artigo
         self.styles.add(ParagraphStyle(
             name='ArticleTitle', 
             parent=self.styles['Heading1'], 
-            fontSize=28,
-            leading=34,
-            spaceBefore=25, 
-            spaceAfter=15, 
+            fontSize=20,      # Reduzido de 28
+            leading=24,
+            spaceBefore=20, 
+            spaceAfter=10, 
             textColor=colors.darkred
         ))
         
+        # Metadados (Data, Fonte)
         self.styles.add(ParagraphStyle(
             name='Metadata', 
             parent=self.styles['Italic'], 
-            fontSize=14,
+            fontSize=10,      # Reduzido de 14
+            leading=12,
             textColor=colors.gray, 
-            spaceAfter=15
+            spaceAfter=10
         ))
         
-        # JUSTIFICADO
+        # CORPO DO TEXTO (Justificado)
         self.styles.add(ParagraphStyle(
             name='BodyTextCustom', 
             parent=self.styles['BodyText'], 
-            fontSize=18,            
-            leading=24,             
-            spaceAfter=12,
-            alignment=4 # Justificado
+            fontSize=12,      # Reduzido de 18 (Padrão de documentos)
+            leading=16,       # Entrelinha confortável para leitura
+            spaceAfter=10,
+            alignment=4       # Justificado
         ))
         
+        # Links / Listas
         self.styles.add(ParagraphStyle(
             name='LinkItem', 
             parent=self.styles['BodyText'], 
-            fontSize=16, 
-            leading=22, 
-            spaceAfter=10
+            fontSize=12,      # Reduzido de 16
+            leading=16, 
+            spaceAfter=6
         ))
 
     def _parse_markdown_to_flowables(self, text):

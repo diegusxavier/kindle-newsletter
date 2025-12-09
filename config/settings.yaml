@@ -15,28 +15,34 @@ preferences:
     - "Meio Ambiente"
   
   include_images: false # true = baixa e insere imagens; false = apenas texto
-  max_articles_per_source: 7 # Limita quantas notícias pegar de cada site para não ficar gigante
+  max_articles_per_source: 3 # Limita quantas notícias pegar de cada site para não ficar gigante
 
 # --- Fontes de Notícias (RSS Feeds) ---
 # Você pode adicionar quantos quiser. Busque por "nome do site + rss" no Google.
 sources:
-  - name: "CNN Brasil - Internacional"
-    url: "https://www.cnnbrasil.com.br/internacional/"  # Tech Crunch
+  - name: "Carta Capital - Mundo"
+    url: "https://www.cartacapital.com.br/mundo/feed/"  
+
+  - name: "Brasil de Fato - Interacional"
+    url: "https://www.brasildefato.com.br/editoria/internacional/feed/" 
   
   - name: "Carta Capital - Política"
-    url: "https://www.cartacapital.com.br/politica/feed/" # Folha - Em Cima da Hora
+    url: "https://www.cartacapital.com.br/politica/feed/" 
+
+  - name: "Brasil de Fato - Política"
+    url: "https://www.brasildefato.com.br/editoria/politica/feed/"
 
   - name: "The Intercept Brasil"
-    url: "https://www.intercept.com.br/feed/" # The Intercept Brasil
+    url: "https://www.intercept.com.br/feed/" 
 
   - name: "O Eco"
-    url: "https://oeco.org.br/feed/" # O Eco
+    url: "https://oeco.org.br/feed/" 
 
   - name: "Tech Crunch"
-    url: "https://techcrunch.com/feed/" # Tech Crunch
+    url: "https://techcrunch.com/feed/" 
 
   - name: "InvestNews"
-    url: "https://investnews.com.br/feed/" #  InvestNews
+    url: "https://investnews.com.br/feed/" 
 
 # --- Configurações de API e Credenciais ---
 # DICA: É recomendável usar variáveis de ambiente para as chaves reais no arquivo .env
