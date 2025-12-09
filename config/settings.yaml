@@ -15,7 +15,8 @@ preferences:
     - "Meio Ambiente"
   
   include_images: false # true = baixa e insere imagens; false = apenas texto
-  max_articles_per_source: 7 # Limita quantas notícias pegar de cada site para não ficar gigante
+  max_articles: 7 # Limita quantas notícias pegar de cada site para não ficar gigante
+  rss_scan_limit: 15 # Define quantas notícias recentes olhar em cada feed RSS
 
 # --- Fontes de Notícias (RSS Feeds) ---
 # Você pode adicionar quantos quiser. Busque por "nome do site + rss" no Google.

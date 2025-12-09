@@ -11,10 +11,9 @@ class NewsScraper:
         self.preferences = config.get('preferences', {})
         self.include_images = self.preferences.get('include_images', False)
         
-        # --- LIMITE DE CANDIDATOS ---
-        # Define quantas notícias recentes o script vai "olhar" em CADA site.
-        # Aumente se quiser que a IA considere notícias mais antigas do feed.
-        self.candidates_limit = 15
+        # --- LIMITE DE CANDIDATOS (AGORA DINÂMICO) ---
+        # Tenta ler do YAML, se não existir, usa 15 como padrão
+        self.candidates_limit = self.preferences.get('rss_scan_limit', 15)
         
         self.images_dir = os.path.join("data", "images")
         os.makedirs(self.images_dir, exist_ok=True)
