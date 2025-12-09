@@ -21,11 +21,11 @@ class NewsCurator:
     def filter_candidates(self, candidates_list, limit=7):
         """
         Analisa uma lista grande de manchetes e escolhe as melhores baseadas nos tópicos.
-        Retorna uma lista de IDs das notícias escolhidas.
+        Retorna uma lista de IDs das notícias escolhidas usando JSON Mode.
         """
         print("📰 Selecionando as notícias mais relevantes...")
         
-        # Prepara a lista para o prompt (simplificada)
+        # Prepara a lista para o prompt
         candidates_text = ""
         for item in candidates_list:
             candidates_text += f"ID: {item['id']} | Título: {item['title']} | Fonte: {item['source']}\n"
@@ -43,20 +43,33 @@ class NewsCurator:
         {candidates_text}
         
         FORMATO DE RESPOSTA:
-        Retorne APENAS uma lista JSON com os IDs das notícias escolhidas. Nada mais.
+        Retorne APENAS uma lista JSON (Array de Strings) com os IDs das notícias escolhidas.
         Exemplo: ["id_1", "id_2", "id_5"]
         """
 
         try:
+            # --- MUDANÇA AQUI: Ativando o JSON Mode ---
             response = self.client.models.generate_content(
                 model=self.model_name,
-                contents=prompt
+                contents=prompt,
+                config={
+                    'response_mime_type': 'application/json'
+                }
             )
             
-            # Limpeza básica para garantir que é um JSON válido
-            text_response = response.text.replace("```json", "").replace("```", "").strip()
-            selected_ids = json.loads(text_response)
+            # Agora podemos carregar direto, sem replace de markdown
+            selected_ids = json.loads(response.text)
             
+            # Validação simples para garantir que recebemos uma lista
+            if not isinstance(selected_ids, list):
+                print("⚠️ IA retornou um JSON válido, mas não é uma lista. Tentando recuperar...")
+                # Se vier um dicionário tipo {"ids": [...]}, tentamos pegar a primeira lista que acharmos
+                if isinstance(selected_ids, dict):
+                    for key, val in selected_ids.items():
+                        if isinstance(val, list):
+                            selected_ids = val
+                            break
+
             # Filtra a lista original mantendo apenas os escolhidos
             final_selection = [item for item in candidates_list if item['id'] in selected_ids]
             return final_selection
@@ -66,9 +79,7 @@ class NewsCurator:
             # Fallback: Se a IA falhar, retorna os primeiros 'limit' itens
             return candidates_list[:limit]
 
-    # ... (Mantenha as funções summarize_article e generate_briefing exatamente como estavam antes) ...
     def summarize_article(self, article_data):
-        # (Código anterior da função summarize_article...)
         print(f"🤔 Analisando artigo: {article_data['title']}...")
         prompt = f"""
         Você é um analista de inteligência especialista. Sua tarefa é ler e analisar a notícia abaixo e criar um relatório de resumo para um jornal executivo.
@@ -78,7 +89,7 @@ class NewsCurator:
         Conteúdo: {article_data['content'][:8000]} (Texto truncado se for muito longo)
 
         FORMATO DE SAÍDA (Markdown):
-        - Se {article_data['title']} estiver em inglês, reescreva-o em traduzindo para o português brasileiro e em itálico no início do resumo.
+        - Apenas se o título {article_data['title']} estiver em inglês, reescreva-o em traduzindo para o português brasileiro e em itálico no início do resumo. Caso esteja em português, não reescreva o título.
         - Escreva um resumo de 2 a 3 parágrafos, mantendo as informações do conteúdo.
         - Liste 3 "Pontos Chave" em bullets.
         - Inclua uma seção "Contexto Adicional" com 2-3 frases que expliquem o motivo da importância do tema ou implicações.
@@ -88,13 +99,13 @@ class NewsCurator:
         Gere apenas o conteúdo markdown, sem introduções ou conversas.
         """
         try:
+            # Aqui NÃO usamos JSON mode, pois queremos Markdown
             response = self.client.models.generate_content(model=self.model_name, contents=prompt)
             return response.text
         except:
             return f"## {article_data['title']}\nErro no resumo."
 
     def generate_briefing(self, summaries_list):
-        # (Código anterior da função generate_briefing...)
         print("📝 Gerando Briefing...")
         combined_text = "\n---\n".join(summaries_list)
         prompt = f"""
@@ -125,8 +136,3 @@ class NewsCurator:
             return response.text
         except:
             return "# Briefing\nErro."
-        
-        # Bloco de teste rápido (para rodar esse arquivo diretamente e ver se funciona)
-
-
-
