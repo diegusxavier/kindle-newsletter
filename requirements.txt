@@ -9,3 +9,5 @@ lxml_html_clean
 python-dotenv
 EbookLib
 dotenv
+sqlalchemy
+psycopg2-binary  # Driver do Postgres
