@@ -8,7 +8,7 @@ import yaml
 from datetime import datetime
 from src.scraper import NewsScraper
 from src.ai_curator import NewsCurator
-from pdf_generator import NewsFormatter
+from src.pdf_generator import NewsFormatterfix
 from src.emailer import EmailSender 
 from src.epub_generator import EpubGenerator
 
