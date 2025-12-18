@@ -92,8 +92,8 @@ class NewsScraper:
             
             # Baixa imagem (Lógica simplificada: sempre baixa se tiver)
             local_image_path = None
-            if article.top_image:
-                local_image_path = self._download_image(article.top_image)
+            # if article.top_image:
+            #     local_image_path = self._download_image(article.top_image)
 
             return {
                 "content": article.text,

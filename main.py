@@ -42,14 +42,14 @@ def main():
             print(f"==========================================")
 
             # --- ETAPA A: Coleta ---
-            candidates = scraper.get_candidates(user, limit_per_source=5)
+            candidates = scraper.get_candidates(user, limit_per_source=4)
             
             if not candidates:
                 print("💤 Nenhuma notícia nova encontrada para este usuário hoje.")
                 continue
 
             # --- ETAPA B: Curadoria (IA) ---
-            selected_articles = curator.filter_candidates(candidates, user, limit=7)
+            selected_articles = curator.filter_candidates(candidates, user, limit=2)
             
             if not selected_articles:
                 print("🧹 A IA filtrou todas as notícias (nada relevante).")
